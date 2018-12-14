@@ -19,6 +19,7 @@ import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
 import com.dji.sdk.sample.internal.utils.OnScreenJoystick;
 import com.dji.sdk.sample.internal.OnScreenJoystickListener;
 import com.dji.sdk.sample.internal.utils.ToastUtils;
+import com.dji.sdk.sample.internal.utils.VideoFeedView;
 import com.dji.sdk.sample.internal.view.PresentableView;
 
 import org.json.JSONObject;
@@ -38,6 +39,7 @@ import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks.CompletionCallback;
 import dji.keysdk.FlightControllerKey;
 import dji.keysdk.KeyManager;
+import dji.sdk.camera.VideoFeeder;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.flightcontroller.Simulator;
 import dji.sdk.mobilerc.MobileRemoteController;
@@ -60,6 +62,10 @@ public class MobileRemoteControllerView extends RelativeLayout
     private OnScreenJoystick screenJoystickLeft;
     private MobileRemoteController mobileRemoteController;
     private FlightControllerKey isSimulatorActived;
+
+    private VideoFeedView primaryVideoFeed;
+    private VideoFeeder.PhysicalSourceListener sourceListener;
+    private TextView primaryVideoFeedTitle;
 
     public MobileRemoteControllerView(Context context) {
         super(context);
@@ -117,6 +123,9 @@ public class MobileRemoteControllerView extends RelativeLayout
             btnSimulator.setChecked(true);
             textView.setText("Simulator is On.");
         }
+        primaryVideoFeed = (VideoFeedView) findViewById(R.id.primary_video_feed);
+        primaryVideoFeedTitle = (TextView) findViewById(R.id.video_feed_title);
+
     }
 
     private void setUpListeners() {
@@ -189,6 +198,23 @@ public class MobileRemoteControllerView extends RelativeLayout
                 }
             }
         });
+
+        sourceListener = new VideoFeeder.PhysicalSourceListener() {
+            @Override
+            public void onChange(VideoFeeder.VideoFeed videoFeed, VideoFeeder.PhysicalSource newPhysicalSource) {
+                if (videoFeed == VideoFeeder.getInstance().getPrimaryVideoFeed()) {
+                    String newText = "Primary Source: " + newPhysicalSource.toString();
+                    ToastUtils.setResultToText(primaryVideoFeedTitle, newText);
+                }
+
+
+            }
+        };
+        primaryVideoFeed.registerLiveVideo(VideoFeeder.getInstance().getPrimaryVideoFeed(), true);
+        String newText = "Primary Source: " + VideoFeeder.getInstance().getPrimaryVideoFeed().getVideoSource().name();
+        ToastUtils.setResultToText(primaryVideoFeedTitle, newText);
+
+        VideoFeeder.getInstance().addPhysicalSourceListener(sourceListener);
     }
 
     private void tearDownListeners() {

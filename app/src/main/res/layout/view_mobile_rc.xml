@@ -63,7 +63,37 @@
             style="@style/common_button"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/video_feed_title"
+            style="@style/test_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Primary Camera" />
+
+        <FrameLayout
+            android:layout_width="480dp"
+            android:layout_height="280dp">
+
+            <com.dji.sdk.sample.internal.utils.VideoFeedView
+                android:id="@+id/primary_video_feed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+    </LinearLayout>
+
     <com.dji.sdk.sample.internal.utils.OnScreenJoystick
+        android:visibility="invisible"
         android:id="@+id/directionJoystickLeft"
         android:layout_width="130dp"
         android:layout_height="130dp"
@@ -74,6 +104,7 @@
         android:background="@mipmap/joystick_bg"/>
 
     <com.dji.sdk.sample.internal.utils.OnScreenJoystick
+        android:visibility="invisible"
         android:id="@+id/directionJoystickRight"
         android:layout_width="130dp"
         android:layout_height="130dp"
